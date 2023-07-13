@@ -7,8 +7,11 @@
   <a href="https://www.spacer.lu/" target="_blank">Miguel&nbsp;Olivares-Mendez</a> &emsp; <b>&middot;</b> &emsp;
   <a href="[https://www.cs.utoronto.ca/~fidler/](https://carolmartinez.github.io/)" target="_blank">Carol&nbsp;Martinez</a> &emsp; <b>&middot;</b> &emsp;
   <br> <br>
-  <a href="https://arxiv.org/abs/xxx" target="_blank">Paper</a> &emsp;
-  <a href="https://x" target="_blank">Project&nbsp;Page</a> 
+<!--   <a href="https://arxiv.org/abs/xxx" target="_blank">Paper</a> &emsp; -->
+<!--   <a href="https://x" target="_blank">Project&nbsp;Page</a>  -->
+  <a>Paper</a>
+  <a>Project</a>
+  
 </div>
 <br><br>
 <p align="center">:construction: :pick: :hammer_and_wrench: :construction_worker:</p>
