@@ -5,7 +5,7 @@
   <a href="https://wwwen.uni.lu/layout/set/print/snt/people/antoine_richard" target="_blank">Antoine&nbsp;Richard</a> &emsp; <b>&middot;</b> &emsp;
   <a href="https://scholar.google.com/citations?user=qDJjBAIAAAAJ&hl=en" target="_blank">Jan&nbsp;Dentler</a> &emsp; <b>&middot;</b> &emsp;
   <a href="https://www.spacer.lu/" target="_blank">Miguel&nbsp;Olivares-Mendez</a> &emsp; <b>&middot;</b> &emsp;
-  <a href="[https://www.cs.utoronto.ca/~fidler/](https://carolmartinez.github.io/)" target="_blank">Carol&nbsp;Martinez</a> &emsp; <b>&middot;</b> &emsp;
+  <a href="https://carolmartinez.github.io/" target="_blank">Carol&nbsp;Martinez</a> &emsp; 
   <br> <br>
 <!--   <a href="https://arxiv.org/abs/xxx" target="_blank">Paper</a> &emsp; -->
 <!--   <a href="https://x" target="_blank">Project&nbsp;Page</a>  -->
