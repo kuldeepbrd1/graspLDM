@@ -9,7 +9,7 @@
   <br> <br>
 <!--   <a href="https://arxiv.org/abs/xxx" target="_blank">Paper</a> &emsp; -->
 <!--   <a href="https://x" target="_blank">Project&nbsp;Page</a>  -->
-  <a href="https://arxiv.org/abs/2312.11243">Paper</a> | <a href="https://x" target="_blank">Project&nbsp;Page</a>
+  <a href="https://arxiv.org/abs/2312.11243">Paper</a> | <a href="https://youtu.be/z3-otAp28XA?feature=shared" target="_blank">Video</a>
   
 </div>
 <br><br>
