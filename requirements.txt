@@ -1,0 +1,33 @@
+addict>=2.4.0
+# black>=22.0.0 # Formatting
+certifi
+diffusers[torch]
+einops
+h5py>=3.7.0
+matplotlib>=3.6.0
+pandas>=1.5.1
+Pillow>=9.2.0
+pyglet==1.5.27
+scipy>=1.9.0
+seaborn>=0.12.1
+shapely>=2.0.0
+six>=1.16.0
+torch==1.13.1 -e https://download.pytorch.org/whl/cu117
+torchvision==0.14.1 -e https://download.pytorch.org/whl/cu117
+tqdm==4.64.1
+trimesh==3.17.1
+# wandb==0.13.6 # Logging
+yapf==0.32.0
+pytorch-lightning==1.8.0
+ninja
+opencv-python-headless
+pyrender
+scikit-learn==1.2.2
+
+## Optional
+# ipykernel
+# iprogress
+# jupyter
+# glooey
+# torcheval
+# pytorch3d @ git+https://github.com/facebookresearch/pytorch3d.git@v0.7.4

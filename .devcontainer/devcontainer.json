@@ -1,0 +1,31 @@
+{
+    // "image": "image_name",
+    "build": {
+        "dockerfile": "../.docker/gpu_env.Dockerfile",
+        "context": "..",
+        "args": {},
+        "target": "" //
+    },
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "QT_X11_NO_MITSHM": "1"
+    },
+    "runArgs": [
+        "--network=host",
+        "--volume=/tmp/.X11-unix/:/tmp/.X11-unix/",
+        // "--volume=<acronym-data-path>:/workspaces/data",
+        "--device=/dev/dri:/dev/dri",
+        "--gpus",
+        "all",
+        "--privileged"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "njpwerner.autodocstring",
+                "ms-toolsai.jupyter"
+            ]
+        }
+    }
+}
