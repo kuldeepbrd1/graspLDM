@@ -1,5 +1,6 @@
-from pytorch_lightning.loggers import Logger, TensorBoardLogger, CSVLogger, WandbLogger
 import enum
+
+from pytorch_lightning.loggers import CSVLogger, Logger, TensorBoardLogger, WandbLogger
 
 LOGGERS = {
     "WandbLogger": WandbLogger,
@@ -24,15 +25,11 @@ class E_Trainers(enum.Enum):
 
             return GraspClassificationTrainer
         elif model_type == E_Trainers.VAE:
-            from grasp_ldm.trainers.grasp_generation_trainer import (
-                GraspVAETrainer,
-            )
+            from grasp_ldm.trainers.grasp_generation_trainer import GraspVAETrainer
 
             return GraspVAETrainer
         elif model_type == E_Trainers.DDM:
-            from grasp_ldm.trainers.grasp_generation_trainer import (
-                GraspLDMTrainer,
-            )
+            from grasp_ldm.trainers.grasp_generation_trainer import GraspLDMTrainer
 
             return GraspLDMTrainer
         else:

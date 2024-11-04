@@ -1,20 +1,21 @@
-import torch
-import torch.nn as nn
-import numpy as np
-from typing import Dict, NamedTuple, List
 import gc
+import json
+import os
+import platform
+import sys
 from contextlib import contextmanager
 from datetime import datetime
-import json
 from pathlib import Path
-import platform
-import psutil
-from tabulate import tabulate
+from typing import Dict, List, NamedTuple
+
 import matplotlib.pyplot as plt
-import seaborn as sns
-import os
-import sys
+import numpy as np
 import pandas as pd
+import psutil
+import seaborn as sns
+import torch
+import torch.nn as nn
+from tabulate import tabulate
 
 # Set environment variables for deterministic behavior
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
@@ -25,8 +26,8 @@ sys.path.append(
         os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..")
     )
 )
-from grasp_ldm.models.modules.ext.pvcnn.pvcnn_base import PVCNN, PVCNN2
 from grasp_ldm.models.modules.ext.pvcnn.pointnet2 import PointNet2SSG as PointNet2
+from grasp_ldm.models.modules.ext.pvcnn.pvcnn_base import PVCNN, PVCNN2
 
 
 class BenchmarkMetrics(NamedTuple):

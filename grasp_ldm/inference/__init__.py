@@ -1,2 +1,2 @@
-from .inference import InferenceVAE, InferenceLDM
-from .inference_base import ModelType, Conditioning
+from .inference import InferenceLDM, InferenceVAE
+from .inference_base import Conditioning, ModelType

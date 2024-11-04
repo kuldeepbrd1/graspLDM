@@ -1,11 +1,11 @@
 # Adapted from https://github.com/alexzhou907/PVD/blob/9747265a5f141e5546fd4f862bfa66aa59f1bd33/modules/pvconv.py
 import torch.nn as nn
 
+from ....modules import Attention, Swish
 from . import functional as F
-from .voxelization import Voxelization
-from .shared_mlp import SharedMLP
 from .se import SE3d
-from ....modules import Swish, Attention
+from .shared_mlp import SharedMLP
+from .voxelization import Voxelization
 
 __all__ = ["PVConv"]
 

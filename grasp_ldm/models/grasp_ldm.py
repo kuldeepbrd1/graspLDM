@@ -1,10 +1,10 @@
 import warnings
-import torch
 
+import torch
 from addict import Dict
 
+from .diffusion import ElucidatedDiffusion, GaussianDiffusion1D
 from .modules.base_network import BaseGraspSampler
-from .diffusion import GaussianDiffusion1D, ElucidatedDiffusion
 
 
 class GraspLatentDDM(BaseGraspSampler):

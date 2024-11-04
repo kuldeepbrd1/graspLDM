@@ -1,7 +1,7 @@
-from torch.utils.data import DataLoader
 from typing import Sequence, Union
+
 import pytorch_lightning as pl
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 
 
 class GraspDataModule(pl.LightningDataModule):

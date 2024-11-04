@@ -3,9 +3,9 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - numpy 
-  # You need numpy from conda to avoid difficulties with 
+  - numpy
+  # You need numpy from conda to avoid difficulties with
   # glibc and opengl issueas for visualization with trimesh/pyglet
   - pip
-  - pip: 
+  - pip:
     - -r file:requirements.txt

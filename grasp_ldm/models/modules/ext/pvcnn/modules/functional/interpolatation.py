@@ -2,7 +2,7 @@ from torch.autograd import Function
 
 from .backend import _backend
 
-__all__ = ['nearest_neighbor_interpolate']
+__all__ = ["nearest_neighbor_interpolate"]
 
 
 class NeighborInterpolation(Function):
@@ -19,7 +19,11 @@ class NeighborInterpolation(Function):
         centers_coords = centers_coords.contiguous()
         points_coords = points_coords.contiguous()
         centers_features = centers_features.contiguous()
-        points_features, indices, weights = _backend.three_nearest_neighbors_interpolate_forward(
+        (
+            points_features,
+            indices,
+            weights,
+        ) = _backend.three_nearest_neighbors_interpolate_forward(
             points_coords, centers_coords, centers_features
         )
         ctx.save_for_backward(indices, weights)

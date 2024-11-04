@@ -1,11 +1,9 @@
-from .acronym.acronym_pointclouds import AcronymShapenetPointclouds
-from .acronym.acronym_partial_pointclouds import AcronymPartialPointclouds
-
-
 from .acronym.acronym_grasp_points import (
     AcronymFullPcGraspPointsClassification,
     AcronymPartialPcGraspPointsClassification,
 )
+from .acronym.acronym_partial_pointclouds import AcronymPartialPointclouds
+from .acronym.acronym_pointclouds import AcronymShapenetPointclouds
 
 POINTCLOUD_GRASP_DATASETS = {
     "AcronymShapenetPointclouds": AcronymShapenetPointclouds,

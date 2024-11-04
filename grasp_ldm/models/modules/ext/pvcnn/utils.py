@@ -4,11 +4,11 @@ import functools
 import torch.nn as nn
 
 from .modules import (
-    SharedMLP,
-    PVConv,
-    PointNetSAModule,
     PointNetAModule,
     PointNetFPModule,
+    PointNetSAModule,
+    PVConv,
+    SharedMLP,
 )
 
 __all__ = [

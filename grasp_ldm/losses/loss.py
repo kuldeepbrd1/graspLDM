@@ -1,9 +1,11 @@
 import json
-import numpy as np
 import random
+from typing import Any
+
+import numpy as np
 import torch
 from torch import nn
-from typing import Any
+
 from grasp_ldm.utils.rotations import tmrp_to_H
 
 __all__ = [

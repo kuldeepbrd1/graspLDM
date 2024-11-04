@@ -6,9 +6,9 @@ import torch
 from addict import Dict
 from torch import Tensor, nn
 
+from grasp_ldm.losses.builder import build_loss_from_cfg
 from grasp_ldm.utils.config import Config
 
-from grasp_ldm.losses.builder import build_loss_from_cfg
 from .modules.base_network import BaseGraspSampler
 from .modules.pc_encoders import PVCNN2Encoder, PVCNNEncoder
 from .modules.resnets import ResNet1D, Unet1D

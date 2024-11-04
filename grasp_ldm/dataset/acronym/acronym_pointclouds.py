@@ -3,11 +3,11 @@ from typing import Tuple
 import torch
 import tqdm
 import trimesh
+from addict import Dict
 
 from ..augmentations import Augmentations, BaseAugmentation
 from . import FILTER_63_CATEGORIES
 from .acronym import AcronymBaseDataset
-from addict import Dict
 
 
 class AcronymShapenetPointclouds(AcronymBaseDataset):

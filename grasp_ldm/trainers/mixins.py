@@ -1,7 +1,8 @@
 from typing import Any, Dict
+
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import LightningModule, Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 
 class TrainerEMAMixin:

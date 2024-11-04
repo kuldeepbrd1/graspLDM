@@ -2,7 +2,7 @@
 
 Source: [https://github.com/mit-han-lab/pvcnn](https://github.com/mit-han-lab/pvcnn)
 
-See [grasp_ldm/models/modules/ext/pvcnn/benchmark.py](grasp_ldm/models/modules/ext/pvcnn/benchmark.py) for the preliminary comparison between PVCNN and PointNet++. 
+See [grasp_ldm/models/modules/ext/pvcnn/benchmark.py](grasp_ldm/models/modules/ext/pvcnn/benchmark.py) for the preliminary comparison between PVCNN and PointNet++.
 
 ```
 @inproceedings{liu2019pvcnn,

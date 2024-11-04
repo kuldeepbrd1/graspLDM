@@ -1,7 +1,9 @@
 from abc import abstractmethod
+
 import numpy as np
-from torch import nn
 import torch
+from torch import nn
+
 from grasp_ldm.utils.rotations import (
     H_to_tmrp,
     get_random_rotations_in_angle_limit,

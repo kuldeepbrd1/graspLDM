@@ -1,6 +1,8 @@
-from setuptools import setup, find_namespace_packages, find_packages
-from grasp_ldm import __version__
 import os
+
+from setuptools import find_namespace_packages, find_packages, setup
+
+from grasp_ldm import __version__
 
 # here = os.path.abspath(os.path.dirname(__file__))
 # requires_list = []

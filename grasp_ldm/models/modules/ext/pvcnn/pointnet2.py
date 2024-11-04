@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 
 from .utils import (
-    create_pointnet2_sa_components,
-    create_pointnet2_fp_modules,
     create_mlp_components,
+    create_pointnet2_fp_modules,
+    create_pointnet2_sa_components,
 )
 
 __all__ = ["PointNet2SSG", "PointNet2MSG"]
@@ -29,12 +29,15 @@ class PointNet2(nn.Module):
         self.num_shapes = num_shapes
         self.with_one_hot_shape_id = with_one_hot_shape_id
 
-        sa_layers, sa_in_channels, channels_sa_features, _ = (
-            create_pointnet2_sa_components(
-                sa_blocks=sa_blocks,
-                extra_feature_channels=extra_feature_channels,
-                width_multiplier=width_multiplier,
-            )
+        (
+            sa_layers,
+            sa_in_channels,
+            channels_sa_features,
+            _,
+        ) = create_pointnet2_sa_components(
+            sa_blocks=sa_blocks,
+            extra_feature_channels=extra_feature_channels,
+            width_multiplier=width_multiplier,
         )
         self.sa_layers = nn.ModuleList(sa_layers)
 

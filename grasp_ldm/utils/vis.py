@@ -1,6 +1,6 @@
-import trimesh
 import numpy as np
 import torch
+import trimesh
 
 
 # TODO: To be removed in favor of gripper.py

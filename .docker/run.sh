@@ -42,12 +42,12 @@ DOCKER_RUN_OPTS="--name ${CONTAINER_NAME} ${DOCKER_RUN_OPTS}"
 ## Parse volumes and environment variables
 while getopts ":v:e:" opt; do
     case "${opt}" in
-    v) CUSTOM_VOLUMES+=("${OPTARG}") ;;
-    e) CUSTOM_ENVS+=("${OPTARG}") ;;
-    *)
-        echo >&2 "Usage: ${0} [-v HOST_DIR:DOCKER_DIR:OPTIONS] [-e ENV=VALUE] [TAG] [CMD]"
-        exit 2
-        ;;
+        v) CUSTOM_VOLUMES+=("${OPTARG}") ;;
+        e) CUSTOM_ENVS+=("${OPTARG}") ;;
+        *)
+            echo >&2 "Usage: ${0} [-v HOST_DIR:DOCKER_DIR:OPTIONS] [-e ENV=VALUE] [TAG] [CMD]"
+            exit 2
+            ;;
     esac
 done
 shift "$((OPTIND - 1))"

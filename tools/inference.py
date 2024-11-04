@@ -28,7 +28,6 @@ class ModelType(Enum):
     VAE = "VAE"
 
 
-
 def unnormalize_pc(pc: Tensor, metas: dict) -> Tensor:
     """Unnormalize pointcloud per dataset statistics (in metas)
 

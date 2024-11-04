@@ -1,7 +1,7 @@
+import glob
 import os
 import shutil
 import warnings
-import glob
 
 
 class Experiment:

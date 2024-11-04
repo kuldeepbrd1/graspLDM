@@ -5,9 +5,7 @@ from grasp_ldm.utils.config import Config
 from . import GraspCVAE, GraspLatentDDM
 from .diffusion import GaussianDiffusion1D
 from .grasp_classifier import PointsBasedGraspClassifier
-from .modules.class_conditioned_resnet import (
-    ClassTimeConditionedResNet1D,
-)
+from .modules.class_conditioned_resnet import ClassTimeConditionedResNet1D
 from .modules.resnets import ResNet1D, TimeConditionedResNet1D, Unet1D
 
 ## ----------------- Makeshift Model Registry ----------------- ##

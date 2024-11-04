@@ -12,7 +12,7 @@ import trimesh
 from torch.utils.data import Dataset
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from grasp_ldm.utils.rotations import PoseRepresentation, H_to_tmrp
+from grasp_ldm.utils.rotations import H_to_tmrp, PoseRepresentation
 from grasp_ldm.utils.torch_utils import minmax_normalize
 
 

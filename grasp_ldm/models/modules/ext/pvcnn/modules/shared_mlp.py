@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-__all__ = ['SharedMLP']
+__all__ = ["SharedMLP"]
 
 
 class SharedMLP(nn.Module):
@@ -18,11 +18,13 @@ class SharedMLP(nn.Module):
             out_channels = [out_channels]
         layers = []
         for oc in out_channels:
-            layers.extend([
-                conv(in_channels, oc, 1),
-                bn(oc),
-                nn.ReLU(True),
-            ])
+            layers.extend(
+                [
+                    conv(in_channels, oc, 1),
+                    bn(oc),
+                    nn.ReLU(True),
+                ]
+            )
             in_channels = oc
         self.layers = nn.Sequential(*layers)
 

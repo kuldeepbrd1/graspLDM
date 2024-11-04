@@ -5,7 +5,7 @@ ENV HOME_DIR=/root/
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-# REQUIREMENTS & CERTS 
+# REQUIREMENTS & CERTS
 ADD requirements.txt /tmp/
 
 SHELL ["/bin/bash", "-c"]
@@ -18,7 +18,7 @@ RUN apt-get update -y\
     && apt-get upgrade -y \
     && DEBIAN_FRONTEND=noninteractive \
     apt-get install -q -y --no-install-recommends \
-    build-essential \ 
+    build-essential \
     cmake \
     dirmngr \
     gnupg2 \
@@ -37,16 +37,15 @@ RUN apt-get update -y\
     && rm -rf /var/lib/apt/lists/* \
     && update-ca-certificates \
     && echo "alias python=python3" >> /root/.bashrc\
-    && echo "alias pip=pip3" >> /root/.bashrc 
+    && echo "alias pip=pip3" >> /root/.bashrc
 
 # PIP
 ENV ACRONYM_INSTALL_PATH=/tmp/acronym
-RUN git clone https://github.com/NVlabs/acronym.git ${ACRONYM_INSTALL_PATH} \ 
+RUN git clone https://github.com/NVlabs/acronym.git ${ACRONYM_INSTALL_PATH} \
     && pip install -r ${ACRONYM_INSTALL_PATH}/requirements.txt \
     && pip install ${ACRONYM_INSTALL_PATH} \
     && rm -r ${ACRONYM_INSTALL_PATH} \
     && pip install -r /tmp/requirements.txt \
-    && rm /tmp/requirements.txt 
+    && rm /tmp/requirements.txt
 
 CMD ["/bin/bash"]
-

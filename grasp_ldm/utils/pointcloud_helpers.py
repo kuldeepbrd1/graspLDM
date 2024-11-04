@@ -1,10 +1,10 @@
+import warnings
 from typing import List
+
 import numpy as np
-from scipy.spatial import cKDTree
 import torch
 import trimesh
-from scipy.spatial import Delaunay
-import warnings
+from scipy.spatial import Delaunay, cKDTree
 
 
 class PointCloudHelpers:

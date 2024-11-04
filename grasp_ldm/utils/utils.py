@@ -1,10 +1,11 @@
 import json
 import multiprocessing
-from scipy.spatial.transform import Rotation as R
-import torch
 
 # from ptflops import get_model_complexity_info
 from typing import Tuple
+
+import torch
+from scipy.spatial.transform import Rotation as R
 
 
 def get_param_count(model: torch.nn.Module):

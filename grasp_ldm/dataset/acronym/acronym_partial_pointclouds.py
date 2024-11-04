@@ -1,7 +1,7 @@
 import glob
 import os
-from typing import Tuple
 import warnings
+from typing import Tuple
 
 try:
     import cv2
@@ -10,17 +10,17 @@ except:
 import numpy as np
 import torch
 import tqdm
+import trimesh
 from numpy import ma
 from termcolor import colored
 from torch.utils.data import Dataset
-import trimesh
 
 from grasp_ldm.utils.camera import Camera
 from grasp_ldm.utils.pointcloud_helpers import PointCloudHelpers
 from grasp_ldm.utils.rotations import H_to_tmrp, tmrp_to_H
 
-from ..augmentations import Augmentations
 from ...utils.gripper import SimplePandaGripper
+from ..augmentations import Augmentations
 
 
 class AcronymPartialPointclouds(Dataset):
@@ -809,8 +809,9 @@ class AcronymPartialPointclouds(Dataset):
         return
 
     def visualize(self, pc, grasps, metas):
-        from grasp_ldm.utils.vis import visualize_pc_grasps
         from utils.rotations import tmrp_to_H
+
+        from grasp_ldm.utils.vis import visualize_pc_grasps
 
         pc = pc * metas["pc_std"] + metas["pc_mean"]
         grasp_poses = grasps[..., :6] * metas["grasp_std"] + metas["grasp_mean"]
