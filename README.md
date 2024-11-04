@@ -36,43 +36,43 @@ Alternatively, to avoid issues with system libraries, you can use a **Docker** c
 
 1. **Conda**
 
-		```
-		conda create env -f environment.yml
-		conda activate grasp_ldm
-		```
+    ```
+    conda create env -f environment.yml
+    conda activate grasp_ldm
+    ```
 
 2. **virtualenv**
 
-		```
-		python -m venv grasp_ldm
-		source grasp_ldm/bin/activate 
-		pip install -r requirements.txt
-		```
+    ```
+    python -m venv grasp_ldm
+    source grasp_ldm/bin/activate 
+    pip install -r requirements.txt
+    ```
 
 3. **Docker**
 
-		- Use the helper scripts to build a docker image and run the container.
-		
-		NOTE: Executing bash scripts may not always be safe. Double check before executing.  
+    - Use the helper scripts to build a docker image and run the container.
+    
+    NOTE: Executing bash scripts may not always be safe. Double check before executing.  
 
-		```
-		cd .docker
-		chmod +x build.sh run.sh
+    ```
+    cd .docker
+    chmod +x build.sh run.sh
 
-		# Build the image
-		./build.sh
+    # Build the image
+    ./build.sh
 
-		# Run a container
-		./run.sh
-		```
+    # Run a container
+    ./run.sh
+    ```
 
 3. **Devcontainer** 
 
-		- Use the editor commands (`Ctrl+Shft+P`) and start typing `Dev Containers: Reopen in Container` and select.
+    - Use the editor commands (`Ctrl+Shft+P`) and start typing `Dev Containers: Reopen in Container` and select.
 
-		- Generally, use `Dev Containers: Reopen in Container` to start the devcontainer. When you wish to rebuild after change use  `Dev Containers: Rebuild and Reopen ion Container.`
-		
-		- For more info on Devcontainers, refer to : ...  
+    - Generally, use `Dev Containers: Reopen in Container` to start the devcontainer. When you wish to rebuild after change use  `Dev Containers: Rebuild and Reopen ion Container.`
+    
+    - For more info on Devcontainers, refer to : ...  
 
 ## Prepare Data
 
