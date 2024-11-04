@@ -1,4 +1,4 @@
-# <p align="center">GraspLDM: Generative 6-DoF Grasp Synthesis using Latent Diffusion Models<br> </p>
+## <p align="center">GraspLDM: Generative 6-DoF Grasp Synthesis using Latent Diffusion Models<br> </p>
 <div align="center">
   <a href="https://kuldeepbrd1.github.io" target="_blank">Kuldeep&nbsp;Barad</a> &emsp; <b>&middot;</b> &emsp;
   <a href="https://github.com/AndrejOrsula" target="_blank">Andrej&nbsp;Orsula</a> &emsp; <b>&middot;</b> &emsp;
