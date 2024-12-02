@@ -113,13 +113,13 @@ Train grasp sampling models (classifier, VAE, DDM) with multi-GPU support.
 
 ```bash
 # Basic usage
-python train.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model vae
+python tools/train_generator.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model vae
 
 # Multi-GPU training
-python train.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model vae --num-gpus 4 --batch-size 32
+python tools/train_generator.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model vae --num-gpus 4 --batch-size 32
 
 # DDM training - NOTE: DDM training can only be done once the VAE model for this experiment has been trained
-python train.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model ddm --seed 42
+python tools/train_generator.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model ddm --seed 42
 ```
 
 <details>
