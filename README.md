@@ -83,10 +83,10 @@ Alternatively, to avoid issues with system libraries, you can use a **Docker** c
 1. Run the demo script using pretrained model:
 
    ```bash
-   python generate_grasps.py --exp_path <path-to-experiment-folder> --mode VAE --visualize
+   python tools/generate_grasps.py --exp_path <path-to-experiment-folder> --mode VAE --visualize
 
    # Example
-   python generate_grasps.py --exp_path checkpoints/generation/fpc_1a_latentc3_z4_pc64_simple_140k_noatt --mode VAE --visualize
+   python tools/generate_grasps.py --exp_path checkpoints/generation/fpc_1a_latentc3_z4_pc64_simple_140k_noatt --mode VAE --visualize
    ```
 
    <details>
