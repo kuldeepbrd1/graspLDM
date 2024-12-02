@@ -109,12 +109,20 @@ Alternatively, to avoid issues with system libraries, you can use a **Docker** c
 
 ## Run Training on ACRONYM Dataset
 
-Train grasp sampling models (classifier, VAE, DDM) with multi-GPU support.
+Train grasp sampling models (VAE, DDM) with multi-GPU support.
+
+NOTE: The training is done in two stages. First the VAE encoders are trained and then the latent space denoising diffusion model. 
 
 ```bash
 # Basic usage
+## 1. First train the VAE
 python tools/train_generator.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model vae
+## 2. Then train the DDM once VAE checkpoints are available.
+python tools/train_generator.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model ddm
+```
 
+Optional usage examples:
+```bash
 # Multi-GPU training
 python tools/train_generator.py --config configs/generation/fpc/fpc_1a_latentc3_z4_pc64_180k.py --model vae --num-gpus 4 --batch-size 32
 
