@@ -21,28 +21,48 @@ Vision-based grasping of unknown objects in unstructured environments is a key c
 
 ## Pre-requisites
 
-1. Python >= 3.8
-1. CUDA > 11.1 and compatible Nvidia driver
+1. Python >= 3.9
+1. CUDA > 11.1 and compatible Nvidia driver (for GPU support)
+1. [uv](https://docs.astral.sh/uv/) package manager (recommended) or pip
 1. (Only for Docker) Nvidia container toolkit
 
 ## Setup
 
-You can setup a python environment using **Conda** or **virtualenv**.
-Alternatively, to avoid issues with system libraries, you can use a **Docker** container or a **VSCode** Devcontainer.
+The recommended way to install is with **[uv](https://docs.astral.sh/uv/)**, a fast Python package manager.
+Alternatively, you can use **pip**, **Conda**, or a **Docker** container.
+
+1. **uv (recommended)**
+
+   Install uv if you don't have it:
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+   Then create a virtual environment and install all dependencies:
+   ```bash
+   uv venv
+   source .venv/bin/activate
+   uv pip install -e ".[dev]"
+   ```
+
+   Run tests to verify the installation:
+   ```bash
+   pytest tests/
+   ```
+
+1. **pip**
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -e ".[dev]"
+   ```
 
 1. **Conda**
 
    ```
    conda create env -f environment.yml
    conda activate grasp_ldm
-   ```
-
-1. **virtualenv**
-
-   ```
-   python -m venv grasp_ldm
-   source grasp_ldm/bin/activate
-   pip install -r requirements.txt
    ```
 
 1. **Docker**
@@ -66,7 +86,7 @@ Alternatively, to avoid issues with system libraries, you can use a **Docker** c
 
    - Use the editor commands (`Ctrl+Shft+P`) and start typing `Dev Containers: Reopen in Container` and select.
 
-   - Generally, use `Dev Containers: Reopen in Container` to start the devcontainer. When you wish to rebuild after change use  `Dev Containers: Rebuild and Reopen ion Container.`
+   - Generally, use `Dev Containers: Reopen in Container` to start the devcontainer. When you wish to rebuild after change use `Dev Containers: Rebuild and Reopen in Container.`
 
    - For more info on Devcontainers, refer to : ...
 
