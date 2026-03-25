@@ -1,6 +1,5 @@
 import glob
 import os
-from abc import abstractmethod
 from enum import Enum
 from typing import Any, Sequence
 
@@ -236,18 +235,6 @@ class Inference:
 
         return scene
 
-    def visualize_fancy(
-        self, pointcloud, grasps, confidences, window_size=(1280, 960), label="grasps"
-    ):
-        # TODO: Glooey vis rotating
-        scene = self.visualize(pointcloud, grasps, confidences, return_scene=True)
-        _ = GlooeyWidget(size=window_size, scenes=[scene], labels=[label])
-        return
-
-    @abstractmethod
-    def generate_grasps(self, **kwargs):
-        raise NotImplementedError
-
     def to_cpu(self, tensors):
         "Detaches and moves all tensors to cpu"
         if isinstance(tensors, Sequence):
@@ -320,28 +307,20 @@ class Inference:
         results["inputs"] = cache
 
         if visualize:
-            scene = self.visualize(
+            return self.visualize(
                 pointcloud=results["pc"].squeeze(0),
                 grasps=results["grasps"].squeeze(0),
                 confidences=results["confidence"].squeeze(0),
                 return_scene=True,
             )
 
-            # scene.add_geometry(
-            #     trimesh.points.PointCloud(
-            #         results["region_pc"].squeeze().cpu().numpy(), colors=(255, 0, 0)
-            #     )
-            # )
-            return scene
-        else:
-            return results
+        return results
 
     def generate_class_conditioned_grasps(
         self,
         pc,
         num_grasps: int = 10,
         metas=None,
-        data_idx=None,
         class_label: int = 0,
         **kwargs,
     ):
@@ -377,7 +356,6 @@ class Inference:
         pc,
         num_grasps: int = 10,
         metas=None,
-        data_idx=None,
         region_id: int = 0,
     ):
         """Region conditioned grasp selection

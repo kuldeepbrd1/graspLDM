@@ -162,16 +162,11 @@ class Camera:
         world_y = normalized_y * depth[y, x] / self._fy
         world_z = depth[y, x]
 
-        if rgb is not None:
-            rgb = rgb[y, x, :]
-
         pc = np.vstack((world_x, world_y, world_z)).T
 
         if rgb is not None:
-            rgb = rgb[y, x, :]
-            return pc, rgb
-        else:
-            return pc
+            return pc, rgb[y, x, :]
+        return pc
 
     def depth_to_pointcloud_torch(
         self, depth: torch.Tensor, rgb: torch.Tensor = None
@@ -203,32 +198,15 @@ class Camera:
         world_y = normalized_y * depth[y, x] / self._fy
         world_z = depth[y, x]
 
-        if rgb is not None:
-            rgb = rgb[y, x, :]
-
         pc = torch.vstack((world_x, world_y, world_z)).T
 
         if rgb is not None:
-            rgb = rgb[y, x, :]
-            return pc, rgb
-        else:
-            return pc
+            return pc, rgb[y, x, :]
+        return pc
 
     def write_to_dir(self, out_dir):
         json_fp = os.path.join(out_dir, f"camera_{self.name}.json")
-
         print(f"Writing camera model {self.name} to {json_fp}.")
-        with json_fp as fileobj:
+        with open(json_fp, "w") as fileobj:
             json.dump(self.data, fileobj)
-        return
 
-    # def get_trimesh_camera(self):
-    #     """Get a trimesh object representing the camera intrinsics.
-    #     Returns:
-    #         trimesh.scene.cameras.Camera: Intrinsic parameters of the camera model
-    #     """
-    #     return trimesh.scene.cameras.Camera(
-    #         fov=(np.rad2deg(self._fov), np.rad2deg(self._fov)),
-    #         resolution=(self._height, self._width),
-    #         z_near=self._z_near,
-    #     )
