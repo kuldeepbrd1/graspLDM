@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, "claude/**", "feature/**"]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Cache pre-commit environments
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Run pre-commit hooks
+        run: pre-commit run --all-files
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-unit-${{ hashFiles('requirements-dev.txt') }}-${{ runner.os }}
+
+      - name: Install CPU-only test dependencies
+        run: |
+          pip install torch==1.13.1+cpu torchvision==0.14.1+cpu \
+            -f https://download.pytorch.org/whl/cpu/torch_stable.html
+          pip install -r requirements-dev.txt
+          pip install addict einops scipy numpy
+
+      - name: Install grasp_ldm (no CUDA extensions)
+        run: pip install -e . --no-deps
+
+      - name: Run unit tests
+        run: pytest tests/unit -v --tb=short -m "not integration and not smoke"
+
+  smoke-tests:
+    name: Smoke Tests (Config Loading)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-smoke-${{ hashFiles('requirements-dev.txt') }}-${{ runner.os }}
+
+      - name: Install minimal dependencies
+        run: |
+          pip install torch==1.13.1+cpu \
+            -f https://download.pytorch.org/whl/cpu/torch_stable.html
+          pip install -r requirements-dev.txt
+          pip install addict yapf
+
+      - name: Install grasp_ldm (no CUDA extensions)
+        run: pip install -e . --no-deps
+
+      - name: Run smoke tests
+        run: pytest tests/smoke -v --tb=short

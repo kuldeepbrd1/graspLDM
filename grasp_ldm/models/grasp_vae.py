@@ -37,7 +37,6 @@ class GraspCVAE(BaseGraspSampler):
             model_scale (int, optional): model scale factor that scales layer channels across models. Defaults to 1.
 
         """
-        ## Using super in the following might fail if the base classes have arguments
         super().__init__()
 
         # Encoders latent feature dims

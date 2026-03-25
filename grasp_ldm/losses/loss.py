@@ -19,7 +19,7 @@ __all__ = [
 
 
 # From: https://github.com/haofuml/cyclical_annealing
-def linear_cyclical_anneling(n_iter, start=0.0, stop=1.0, n_cycle=4, ratio=0.5):
+def linear_cyclical_annealing(n_iter, start=0.0, stop=1.0, n_cycle=4, ratio=0.5):
     L = np.ones(n_iter) * stop
     period = n_iter / n_cycle
     step = (stop - start) / (period * ratio)  # linear schedule
@@ -53,23 +53,23 @@ class GraspReconstructionLoss(VAEReconstructionLoss):
         self.translation_weight = translation_weight
         self.rotation_weight = rotation_weight
 
-    def forward(self, x_out, x_in, **kwargs):
+    def forward(self, x_in, x_out, **kwargs):
         """Forward
 
         Args:
-            x_out (Tensor): [B, 6] Predicted pose- (t(3), mrp(3))
             x_in (Tensor): [B, 6] Ground truth pose- (t(3), mrp(3))
+            x_out (Tensor): [B, 6] Predicted pose- (t(3), mrp(3))
 
         Returns:
             _type_: _description_
         """
-        x_pred = x_out.clone()
-        x_pred[..., :3] = x_pred[..., :3] * self.translation_weight
-        x_pred[..., 3:] = x_pred[..., 3:] * self.rotation_weight
-
         x_gt = x_in.clone()
         x_gt[..., :3] = x_gt[..., :3] * self.translation_weight
         x_gt[..., 3:] = x_gt[..., 3:] * self.rotation_weight
+
+        x_pred = x_out.clone()
+        x_pred[..., :3] = x_pred[..., :3] * self.translation_weight
+        x_pred[..., 3:] = x_pred[..., 3:] * self.rotation_weight
 
         return super().forward(x_gt, x_pred)
 
@@ -148,7 +148,7 @@ class VAELatentLoss(nn.Module):
         else:
             assert num_cycles is not None and num_steps is not None
             self.weight = None
-            self.schedule = linear_cyclical_anneling(
+            self.schedule = linear_cyclical_annealing(
                 num_steps,
                 start=start,
                 stop=stop,
@@ -190,8 +190,7 @@ class VAELatentLoss(nn.Module):
     def set_weight_from_schedule(self, step):
         assert (
             hasattr(self, "schedule") and self.schedule is not None
-        ), "No member schedule found in self, to set the loss weight from schedule."
-        f"Weight annealing was set to {self.is_annealed}"
+        ), f"No schedule found. Weight annealing was set to {self.is_annealed}"
 
         self.weight = (
             self.schedule[step] if step < len(self.schedule) else self.schedule[-1]
