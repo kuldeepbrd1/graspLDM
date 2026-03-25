@@ -113,8 +113,6 @@ def _make_ldm(vae):
         diffusion_loss="l2",
         beta_schedule="linear",
         noise_scheduler_type="ddpm",
-        is_conditioned=True,
-        joint_training=False,
         denoising_loss_weight=1,
         variance_type="fixed_small",
         elucidated_diffusion=False,

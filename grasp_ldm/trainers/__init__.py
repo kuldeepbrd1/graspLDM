@@ -10,7 +10,6 @@ LOGGERS = {
 
 
 class E_Trainers(enum.Enum):
-    CLASSIFIER = "classifier"
     VAE = "vae"
     DDM = "ddm"
 
@@ -18,13 +17,7 @@ class E_Trainers(enum.Enum):
         return f"{self.__class__.__name__}.{self.name}"
 
     def _get_trainer(model_type: str):
-        if model_type == E_Trainers.CLASSIFIER:
-            from grasp_ldm.trainers.grasp_classification_trainer import (
-                GraspClassificationTrainer,
-            )
-
-            return GraspClassificationTrainer
-        elif model_type == E_Trainers.VAE:
+        if model_type == E_Trainers.VAE:
             from grasp_ldm.trainers.grasp_generation_trainer import GraspVAETrainer
 
             return GraspVAETrainer
@@ -39,9 +32,7 @@ class E_Trainers(enum.Enum):
         return E_Trainers._get_trainer(self)
 
     def from_string(model_type: str):
-        if model_type == "classifier":
-            return E_Trainers.CLASSIFIER
-        elif model_type == "vae":
+        if model_type == "vae":
             return E_Trainers.VAE
         elif model_type == "ddm":
             return E_Trainers.DDM

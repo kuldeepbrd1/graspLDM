@@ -16,7 +16,7 @@ def parse_args():
         "-m",
         help="Model type",
         required=True,
-        choices=["classifier", "vae", "ddm"],
+        choices=["vae", "ddm"],
     )
     parser.add_argument("--root-dir", "-d", help="Root directory")
     parser.add_argument("--num-gpus", "-g", type=int, help="Number of GPUs to use")
