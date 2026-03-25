@@ -29,7 +29,8 @@ def load_data_splits(root_dir: str):
     split_paths = glob.glob(os.path.join(root_dir, "splits/*.json"))
     for split_p in split_paths:
         category = os.path.basename(split_p).split(".json")[0]
-        splits = json.load(open(split_p, "r"))
+        with open(split_p, "r") as f:
+            splits = json.load(f)
         split_dict[category] = {}
         split_dict[category]["train"] = [
             obj_p.replace(".json", ".h5") for obj_p in splits["train"]

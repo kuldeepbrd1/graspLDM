@@ -1,7 +1,16 @@
 from typing import Sequence, Union
 
+import torch
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader, Dataset
+
+
+def _worker_init_fn(worker_id: int) -> None:
+    """Seed each dataloader worker for reproducible multi-worker loading."""
+    worker_seed = torch.initial_seed() % 2**32
+    import numpy as np, random
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 
 class GraspDataModule(pl.LightningDataModule):
@@ -33,6 +42,7 @@ class GraspDataModule(pl.LightningDataModule):
             num_workers=self.num_workers,
             pin_memory=self.pin_memory,
             persistent_workers=self.persistent_workers,
+            worker_init_fn=_worker_init_fn if self.num_workers > 0 else None,
         )
 
     def val_dataloader(self):

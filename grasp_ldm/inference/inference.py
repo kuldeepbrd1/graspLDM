@@ -53,7 +53,7 @@ class InferenceLDM(Inference):
                 )
 
             else:
-                NotImplementedError
+                raise NotImplementedError(f"Fast sampler not implemented for mode: {self.ddm_mode}")
         else:
             if self.ddm_mode == "ddm" and num_inference_steps is None:
                 num_inference_steps = 1000

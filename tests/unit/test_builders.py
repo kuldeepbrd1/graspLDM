@@ -84,8 +84,8 @@ class TestModelRegistry:
             type="ResNet1D",
             args=dict(
                 dim=16,
-                dim_mults=(1, 2),
-                in_features=16,
+                block_channels=(8, 16),
+                resnet_block_groups=2,
             ),
         )
         model = build_model(cfg)

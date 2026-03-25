@@ -109,9 +109,10 @@ class Experiment:
         self.exp_dir = os.path.join(exp_out_root, exp_name)
         self._modes = modes
 
-        assert os.path.isdir(self.exp_dir), FileNotFoundError(
-            f"No experiment directory `{exp_name}` found in `output/`"
-        )
+        if not os.path.isdir(self.exp_dir):
+            raise FileNotFoundError(
+                f"No experiment directory `{exp_name}` found in `output/`"
+            )
 
         self._config_paths = {
             mode: glob.glob(f"{self.exp_dir}/{mode}/*.py") for mode in self._modes

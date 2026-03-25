@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import abstractmethod, abstractproperty
+from abc import abstractmethod
 from typing import Sequence
 
 import torch
@@ -194,6 +194,8 @@ class LightningTrainer(LightningModule, TrainerEMAMixin):
             model=self,
             train_dataloaders=self.train_dataloader(),
             val_dataloaders=self.val_dataloader() if self.val_dataloader() else None,
+            # Lightning 2.x: ckpt_path replaces the removed resume_from_checkpoint Trainer arg
+            ckpt_path=self.resume_from_checkpoint,
         )
 
     def get_pl_trainer(self):
@@ -219,7 +221,6 @@ class LightningTrainer(LightningModule, TrainerEMAMixin):
             callbacks=callbacks,
             gradient_clip_val=self.trainer_config.gradient_clip_val,
             check_val_every_n_epoch=self.trainer_config.check_val_every_n_epoch,
-            resume_from_checkpoint=self.resume_from_checkpoint,
             default_root_dir=self.trainer_config.default_root_dir,
         )
 

@@ -145,8 +145,8 @@ class TestGraspLatentDDMForward:
         xyz = torch.randn(BATCH, N_POINTS, 3)
         grasps = torch.randn(BATCH, 7)
 
-        loss_dict = ldm(xyz, grasps)
-        assert "loss" in loss_dict or isinstance(loss_dict, torch.Tensor) or hasattr(loss_dict, "loss")
+        _, loss_dict = ldm(xyz, grasps)
+        assert "loss" in loss_dict
 
     def test_denoising_loss_is_scalar(self):
         vae = _make_vae()
@@ -155,9 +155,8 @@ class TestGraspLatentDDMForward:
         xyz = torch.randn(BATCH, N_POINTS, 3)
         grasps = torch.randn(BATCH, 7)
 
-        loss_dict = ldm(xyz, grasps)
-        # The returned dict contains a 'loss' key with scalar tensor
-        loss = loss_dict.loss if hasattr(loss_dict, "loss") else loss_dict
+        _, loss_dict = ldm(xyz, grasps)
+        loss = loss_dict.loss
         assert loss.ndim == 0, f"Expected scalar loss, got shape {loss.shape}"
 
     def test_denoising_loss_is_finite(self):
@@ -167,8 +166,8 @@ class TestGraspLatentDDMForward:
         xyz = torch.randn(BATCH, N_POINTS, 3)
         grasps = torch.randn(BATCH, 7)
 
-        loss_dict = ldm(xyz, grasps)
-        loss = loss_dict.loss if hasattr(loss_dict, "loss") else loss_dict
+        _, loss_dict = ldm(xyz, grasps)
+        loss = loss_dict.loss
         assert torch.isfinite(loss), "Denoising loss is not finite"
 
     def test_vae_params_frozen_during_ldm_training(self):
@@ -185,7 +184,7 @@ class TestGraspLatentDDMForward:
         assert len(trainable) > 0, "Diffusion model should have trainable parameters"
 
     def test_generate_grasps_shape(self):
-        """generate_grasps should return poses of shape [B*num_grasps, 6]."""
+        """generate_grasps should return poses of shape [num_grasps, 6]."""
         vae = _make_vae()
         ldm = _make_ldm(vae).eval()
         ldm.set_inference_timesteps(5)
@@ -194,8 +193,10 @@ class TestGraspLatentDDMForward:
         num_grasps = 4
 
         out = ldm.generate_grasps(xyz, num_grasps=num_grasps)
-        # out is a tuple; first element should be tmrp poses
-        tmrp = out[0] if isinstance(out, (tuple, list)) else out
+        # generate_grasps returns (decoder_output, intermediates)
+        # decoder_output is (tmrp, cls_logits[, quals])
+        decoder_out = out[0] if isinstance(out, (tuple, list)) else out
+        tmrp = decoder_out[0] if isinstance(decoder_out, (tuple, list)) else decoder_out
         assert tmrp.shape[0] == num_grasps, (
             f"Expected {num_grasps} grasps, got {tmrp.shape[0]}"
         )

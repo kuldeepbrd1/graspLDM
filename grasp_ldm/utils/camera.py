@@ -10,7 +10,7 @@ from .utils import load_json
 
 try:
     import pyrender
-except:
+except ImportError:
     warnings.warn("pyrender was not found. Rendering modules will not work.")
 
 

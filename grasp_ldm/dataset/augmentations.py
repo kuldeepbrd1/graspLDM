@@ -133,8 +133,8 @@ class RandomRotation(BaseAugmentation):
         Returns:
             _type_: _description_
         """
-        assert pc.shape[-1] == 3, "Pointcloud should be of 3 or 4 dimensions"
-        assert grasps.shape[-1] == 6, "Pointcloud should be of 3 or 4 dimensions"
+        assert pc.shape[-1] == 3, "Pointcloud last dim should be 3 (xyz)"
+        assert grasps.shape[-1] == 6, "Grasps should have 6 dimensions [t(3) mrp(3)]"
 
         if torch.rand((1,)) < self.p:
             B, N, D = pc.shape
@@ -182,12 +182,12 @@ class RandomRotationPerGrasp(BaseAugmentation):
         self.p = p
 
     def forward(self, pc, grasps):
-        b, n, d = pc.shape[0]
-        assert d == 3, "Pointcloud should be of 3 or 4 dimensions"
-        assert grasps.shape[-1] == 6, "Pointcloud should be of 3 or 4 dimensions"
+        b, n, d = pc.shape
+        assert d == 3, "Pointcloud last dim should be 3 (xyz)"
+        assert grasps.shape[-1] == 6, "Grasps should have 6 dimensions [t(3) mrp(3)]"
         assert b == grasps.shape[0], "Mismatch in batch sizes between pc and grasps"
 
-        pc = torch.concatenate(pc, torch.ones((b, n, 1)), dim=-1)
+        pc = torch.concatenate((pc, torch.ones((b, n, 1))), dim=-1)
 
         H = torch.eye(4).unsqueeze(0).repeat((b, 1, 1))
 

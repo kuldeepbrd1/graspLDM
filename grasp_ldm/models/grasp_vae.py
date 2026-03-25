@@ -57,13 +57,13 @@ class GraspCVAE(BaseGraspSampler):
         # Optional losses
         self.classification_loss = (
             build_loss_from_cfg(loss_config.classification_loss)
-            if hasattr(loss_config, "classification_loss")
+            if "classification_loss" in loss_config
             else None
         )
 
         self.quality_loss = (
             build_loss_from_cfg(loss_config.quality_loss)
-            if hasattr(loss_config, "quality_loss")
+            if "quality_loss" in loss_config
             else None
         )
 
@@ -173,7 +173,7 @@ class GraspCVAE(BaseGraspSampler):
 
         # Reconstruction loss
         loss_dict.reconstruction_loss = self.reconstruction_loss(
-            grasps_in.squeeze(), grasps_out.squeeze(), **kwargs
+            grasps_in, grasps_out, **kwargs
         )
 
         # Latent loss
@@ -188,7 +188,7 @@ class GraspCVAE(BaseGraspSampler):
             cls_out = x_out[..., 6]
 
             loss_dict.classification_loss = self.classification_loss(
-                output=cls_out.squeeze(), targets=cls_in.squeeze(), **kwargs
+                output=cls_out, targets=cls_in, **kwargs
             )
 
         # Quality loss
@@ -197,7 +197,7 @@ class GraspCVAE(BaseGraspSampler):
             quals_out = x_out[..., 7:]
 
             loss_dict.quality_loss = self.quality_loss(
-                quals_in.squeeze(), quals_out.squeeze(), **kwargs
+                quals_in, quals_out, **kwargs
             )
 
         # Do not add unweighted KL loss- only for monitoring
@@ -222,6 +222,7 @@ class GraspCVAE(BaseGraspSampler):
         """Helper function to sample grasp latent codes"""
         return torch.randn(batch_size, self.grasp_latent_size).to(device)
 
+    @torch.no_grad()
     def generate_grasps(self, xyz: Tensor, num_grasps: int = 10) -> Tensor:
         """Generates grasps for a given pointcloud
 
@@ -555,7 +556,8 @@ class VAEBottleneck(nn.Module):
             mu (torch.Tensor): Mean [B, L]
             logvar (torch.Tensor): Log variance [B, L]
         """
-        std = torch.exp(0.5 * logvar)
+        # Clamp logvar to prevent overflow/underflow in exp
+        std = torch.exp(0.5 * logvar.clamp(-30, 20))
         eps = torch.randn_like(std)
         return mu + eps * std
 

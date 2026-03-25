@@ -5,7 +5,7 @@ from typing import Tuple
 
 try:
     import cv2
-except:
+except ImportError:
     pass
 import numpy as np
 import torch

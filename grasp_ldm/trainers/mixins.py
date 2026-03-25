@@ -33,8 +33,8 @@ class TrainerEMAMixin:
         """
 
         def check_key(q_dict, q_key):
-            if key in q_dict:
-                if q_dict[key] is not None:
+            if q_key in q_dict:
+                if q_dict[q_key] is not None:
                     return True
             return False
 

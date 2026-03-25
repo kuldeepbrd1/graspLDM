@@ -1,13 +1,13 @@
 import os
 import random
 import warnings
-from abc import abstractmethod, abstractproperty
+from abc import abstractmethod
 
 import torch
 import torcheval.metrics.functional as Metrics
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.loggers import CSVLogger, Logger, TensorBoardLogger, WandbLogger
-from utils.rotations import tmrp_to_H
+from grasp_ldm.utils.rotations import tmrp_to_H
 
 from grasp_ldm.dataset.builder import build_dataset_from_cfg
 from grasp_ldm.models.builder import build_model_from_cfg
@@ -55,11 +55,13 @@ class GraspGenerationTrainer(LightningTrainer):
 
         self.resume_from_checkpoint = self._experiment.default_resume_checkpoint
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def _model_type_str(self) -> str:
         raise NotImplementedError
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def _use_qualities(self) -> bool:
         raise NotImplementedError
 

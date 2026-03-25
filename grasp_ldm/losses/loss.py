@@ -147,7 +147,6 @@ class VAELatentLoss(nn.Module):
             self.schedule = None
         else:
             assert num_cycles is not None and num_steps is not None
-            self.weight = None
             self.schedule = linear_cyclical_annealing(
                 num_steps,
                 start=start,
@@ -155,6 +154,7 @@ class VAELatentLoss(nn.Module):
                 n_cycle=num_cycles,
                 ratio=ratio,
             )
+            self.weight = self.schedule[0]
         self.is_annealed = cyclical_annealing
 
     def forward(
@@ -179,7 +179,8 @@ class VAELatentLoss(nn.Module):
             torch.Tensor:  weighted kl loss [1,]  (if return_unweighted is False)
             tuple(torch.Tensor, torch.Tensor): weighted_loss[1,], unweighted_kld[1,]
         """
-        kl_d = -0.5 * torch.sum(1 + logvar - mu**2 - logvar.exp(), dim=1)
+        # Clamp logvar before exp to prevent numerical overflow/underflow
+        kl_d = -0.5 * torch.sum(1 + logvar - mu**2 - logvar.clamp(-30, 20).exp(), dim=1)
         kl_d = torch.mean(kl_d, dim=0)
 
         if return_unweighted:

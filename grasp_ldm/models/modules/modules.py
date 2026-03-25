@@ -58,10 +58,12 @@ class FCLayers(nn.Module):
     def __init__(
         self,
         in_features,
-        layer_outs_specs=[128, 256, 512],
+        layer_outs_specs=None,
         layer_normalization=True,
     ) -> None:
         super().__init__()
+        if layer_outs_specs is None:
+            layer_outs_specs = [128, 256, 512]
 
         self.in_features = in_features
         self.out_features = layer_outs_specs[-1]

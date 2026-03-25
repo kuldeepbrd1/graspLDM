@@ -28,8 +28,8 @@ class GaussianDiffusion1D(nn.Module):
         beta_schedule: str = "linear",
         variance_type: str = "fixed_small",
         pred_type: str = "epsilon",
-        beta_start: str = 0.0001,
-        beta_end: str = 0.02,
+        beta_start: float = 0.0001,
+        beta_end: float = 0.02,
         num_steps: int = 1000,
         loss_type: str = "l1",
         clip_sample=True,
@@ -213,7 +213,7 @@ class GaussianDiffusion1D(nn.Module):
 
         assert (
             d == self.n_dims
-        ), f"Got tensor with size {d} at index -1, expected {self.ndims} from self.ndims."
+        ), f"Got tensor with size {d} at index -1, expected {self.n_dims} from self.n_dims."
 
         t = torch.randint(0, self.num_steps, (b,), device=x_0.device).long()
 
