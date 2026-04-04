@@ -263,8 +263,12 @@ class RandomPointcloudDropout(BaseAugmentation):
                 drop_idx = torch.randperm(n)[:num_dropout_pts]
 
                 if len(drop_idx) > 0:
-                    # Replace dropout points with first point repeated
-                    pc[b_i, drop_idx, :] = pc[b_i, 0, :].clone()
+                    # Replace dropout points with randomly sampled surviving points
+                    keep_mask = torch.ones(n, dtype=torch.bool)
+                    keep_mask[drop_idx] = False
+                    keep_idx = keep_mask.nonzero(as_tuple=True)[0]
+                    rand_idx = keep_idx[torch.randint(len(keep_idx), (len(drop_idx),))]
+                    pc[b_i, drop_idx, :] = pc[b_i, rand_idx, :].clone()
 
         return pc
 

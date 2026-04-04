@@ -31,6 +31,7 @@ class GaussianDiffusion1D(nn.Module):
         beta_start: float = 0.0001,
         beta_end: float = 0.02,
         num_steps: int = 1000,
+        num_inference_steps: int = None,
         loss_type: str = "l1",
         clip_sample=True,
     ) -> None:
@@ -87,9 +88,13 @@ class GaussianDiffusion1D(nn.Module):
         self.model = model
         self.n_dims = n_dims
         self.channels = 1
+        self._num_inference_steps = num_inference_steps
 
         self.noise_scheduler = self.configure_noise_scheduler(noise_scheduler_type)
         self._noise_scheduler_type = noise_scheduler_type
+
+        if num_inference_steps is not None:
+            self.noise_scheduler.set_timesteps(num_inference_steps)
 
         assert (
             loss_type in self.ALL_LOSSES
@@ -225,7 +230,14 @@ class GaussianDiffusion1D(nn.Module):
         else:
             noise_pred = out
 
-        loss = self.loss_fn(true_noise, noise_pred)
+        if self.pred_type == "v_prediction":
+            # v = alpha_t * noise - sigma_t * x_0 (Salimans & Ho 2022)
+            target = self.noise_scheduler.get_velocity(x_0, true_noise, t)
+        else:
+            # epsilon prediction: predict the added noise (default)
+            target = true_noise
+
+        loss = self.loss_fn(target, noise_pred)
 
         return loss
 

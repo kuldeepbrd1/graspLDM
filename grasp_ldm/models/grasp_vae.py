@@ -90,6 +90,7 @@ class GraspCVAE(BaseGraspSampler):
         )
 
         self.out_features = self.decoder.out_features
+        self.pose_dims = self.decoder.pose_dims
 
     @property
     def latent_losses(self):
@@ -122,7 +123,9 @@ class GraspCVAE(BaseGraspSampler):
 
         Args:
             xyz (Tensor): batch point clouds
-            grasp (Tensor): batch grasp [B,6], where dim 1 is [t(3) mrp(3)]
+            grasp (Tensor): batch grasp pose. Shape depends on decoder pose_dims:
+                - TMRP: [B, 7] where dims are [t(3) mrp(3) cls(1)]
+                - T6D:  [B, 10] where dims are [t(3) rot6d(6) cls(1)]
             compute_loss (bool, optional): Compute loss for training? Defaults to True.
 
         Returns:
@@ -168,8 +171,9 @@ class GraspCVAE(BaseGraspSampler):
         """
         loss_dict = Dict(loss=0)
 
-        grasps_in = x_in[..., :6]
-        grasps_out = x_out[..., :6]
+        p = self.pose_dims
+        grasps_in = x_in[..., :p]
+        grasps_out = x_out[..., :p]
 
         # Reconstruction loss
         loss_dict.reconstruction_loss = self.reconstruction_loss(
@@ -184,8 +188,8 @@ class GraspCVAE(BaseGraspSampler):
 
         # Classification loss
         if self.classification_loss is not None:
-            cls_in = x_in[..., 6]
-            cls_out = x_out[..., 6]
+            cls_in = x_in[..., p]
+            cls_out = x_out[..., p]
 
             loss_dict.classification_loss = self.classification_loss(
                 output=cls_out, targets=cls_in, **kwargs
@@ -193,8 +197,8 @@ class GraspCVAE(BaseGraspSampler):
 
         # Quality loss
         if self.quality_loss is not None:
-            quals_in = x_in[..., 7:]
-            quals_out = x_out[..., 7:]
+            quals_in = x_in[..., p + 1:]
+            quals_out = x_out[..., p + 1:]
 
             loss_dict.quality_loss = self.quality_loss(
                 quals_in, quals_out, **kwargs
@@ -380,7 +384,10 @@ class ConditionalGraspPoseDecoder(nn.Module):
         _net_out_features = self.net.out_features
 
         # Output layers
-        self.tmrp = nn.Linear(_net_out_features, 6)
+        # pose_dims=6 for TMRP, pose_dims=9 for T6D (Zhou et al. CVPR 2019)
+        pose_dims = config.args.get("pose_dims", 6) if hasattr(config, "args") else 6
+        self.pose_dims = pose_dims
+        self.pose_head = nn.Linear(_net_out_features, pose_dims)
         self.class_logits = nn.Linear(_net_out_features, 1)
 
         self._use_qualities = (
@@ -393,10 +400,10 @@ class ConditionalGraspPoseDecoder(nn.Module):
         if self._use_qualities:
             self.num_qualities = num_output_qualities
             self.qualities = nn.Linear(_net_out_features, num_output_qualities)
-            self.out_features = (6, 1, num_output_qualities)
+            self.out_features = (pose_dims, 1, num_output_qualities)
         else:
             self.num_qualities = None
-            self.out_features = (6, 1)
+            self.out_features = (pose_dims, 1)
 
     def forward(
         self, z_h: Tensor, cond: Tensor = None
@@ -424,10 +431,10 @@ class ConditionalGraspPoseDecoder(nn.Module):
         z_h = z_h.squeeze(-2)
 
         # Decode Outputs
-        tmrp = self.tmrp(z_h)
+        pose = self.pose_head(z_h)
         cls_logits = self.class_logits(z_h)
 
-        res = (tmrp, cls_logits)
+        res = (pose, cls_logits)
 
         if self._use_qualities:
             quals = self.qualities(z_h)

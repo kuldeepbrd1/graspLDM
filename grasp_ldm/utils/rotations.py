@@ -2,6 +2,7 @@ import enum
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 
 
 ## Add enum for pose representation
@@ -9,6 +10,7 @@ class PoseRepresentation(enum.Enum):
     TMRP = enum.auto()
     TQUAT = enum.auto()
     H = enum.auto()
+    T6D = enum.auto()   # translation(3) + 6D rotation(6) — Zhou et al. CVPR 2019
 
 
 def quat_xyzw_to_wxyz(q):
@@ -335,3 +337,84 @@ def get_random_rotations_in_angle_limit(angle_limit, batch_size=1):
 
     rotmats = quat_to_rotmat(q, is_xyzw=True)
     return rotmats
+
+
+# ---------------------------------------------------------------------------
+# 6D rotation representation (Zhou et al., CVPR 2019)
+# "On the Continuity of Rotation Representations in Neural Networks"
+# https://openaccess.thecvf.com/content_CVPR_2019/papers/Zhou_On_the_Continuity_of_Rotation_Representations_CVPR_2019_paper.pdf
+#
+# A rotation matrix R ∈ SO(3) is encoded as its first two columns [r1, r2]
+# (6 numbers). The third column r3 = r1 × r2 / ||r1 × r2|| is recovered
+# analytically via Gram-Schmidt orthonormalisation, so there is no
+# singularity and the representation is continuous everywhere.
+# ---------------------------------------------------------------------------
+
+
+def matrix_to_rot6d(R: torch.Tensor) -> torch.Tensor:
+    """Convert rotation matrix to 6D representation.
+
+    Args:
+        R: rotation matrix [..., 3, 3]
+
+    Returns:
+        Tensor: 6D representation [..., 6]  (first two columns, column-major)
+    """
+    return R[..., :2].transpose(-1, -2).reshape(*R.shape[:-2], 6)
+
+
+def rot6d_to_matrix(r6: torch.Tensor) -> torch.Tensor:
+    """Recover rotation matrix from 6D representation via Gram-Schmidt.
+
+    Args:
+        r6: 6D representation [..., 6]
+
+    Returns:
+        Tensor: rotation matrix [..., 3, 3]
+    """
+    # Split into two 3-vectors
+    x6 = r6.reshape(*r6.shape[:-1], 2, 3)
+    a1 = x6[..., 0, :]  # [..., 3]
+    a2 = x6[..., 1, :]  # [..., 3]
+
+    # Gram-Schmidt orthonormalisation
+    b1 = F.normalize(a1, dim=-1)
+    b2 = F.normalize(a2 - (b1 * a2).sum(-1, keepdim=True) * b1, dim=-1)
+    b3 = torch.cross(b1, b2, dim=-1)
+
+    return torch.stack([b1, b2, b3], dim=-1)  # [..., 3, 3]
+
+
+def H_to_t6d(H: torch.Tensor) -> torch.Tensor:
+    """Convert homogeneous transform to T6D representation [t(3) | rot6d(6)].
+
+    Args:
+        H: homogeneous transform [..., 4, 4]
+
+    Returns:
+        Tensor: T6D [..., 9]
+    """
+    t = H[..., :3, 3]
+    r6 = matrix_to_rot6d(H[..., :3, :3])
+    return torch.cat([t, r6], dim=-1)
+
+
+def t6d_to_H(t6d: torch.Tensor) -> torch.Tensor:
+    """Convert T6D representation [t(3) | rot6d(6)] to homogeneous transform.
+
+    Args:
+        t6d: T6D representation [..., 9]
+
+    Returns:
+        Tensor: homogeneous transform [..., 4, 4]
+    """
+    t = t6d[..., :3]
+    R = rot6d_to_matrix(t6d[..., 3:])
+
+    batch_shape = t6d.shape[:-1]
+    H = torch.eye(4, device=t6d.device, dtype=t6d.dtype).expand(
+        *batch_shape, 4, 4
+    ).clone()
+    H[..., :3, :3] = R
+    H[..., :3, 3] = t
+    return H

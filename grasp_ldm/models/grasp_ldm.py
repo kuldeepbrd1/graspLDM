@@ -3,7 +3,7 @@ import warnings
 import torch
 from addict import Dict
 
-from .diffusion import ElucidatedDiffusion, GaussianDiffusion1D
+from .diffusion import DriftingModel, ElucidatedDiffusion, GaussianDiffusion1D
 from .modules.base_network import BaseGraspSampler
 
 
@@ -16,11 +16,16 @@ class GraspLatentDDM(BaseGraspSampler):
         diffusion_loss,
         beta_schedule="linear",
         noise_scheduler_type: str = "ddpm",
+        num_inference_steps: int = None,
+        pred_type: str = "epsilon",
         denoising_loss_weight=1,
         variance_type="fixed_small",
         elucidated_diffusion=False,
         beta_start=5e-5,
         beta_end=5e-2,
+        diffusion_type: str = "ddpm",
+        drift_step_size: float = 1.0,
+        kernel_bandwidth: float = 1.0,
     ) -> None:
         """Grasp Latent Diffusion Model
 
@@ -35,17 +40,38 @@ class GraspLatentDDM(BaseGraspSampler):
                 Valid: ["linear", "scaled_linear", "squaredcos_cap_v2"]. Defaults to "linear".
             noise_scheduler_type (str, optional): noise scheduler type.
                 Valid: ["ddpm", "ddim"]. Defaults to "ddpm".
+            num_inference_steps (int, optional): number of inference steps for DDIM/DDPM sampling.
+                Defaults to None (uses num_train_timesteps).
+            pred_type (str, optional): prediction type for diffusion model.
+                Valid: "epsilon" (predict noise), "v_prediction" (predict velocity). Defaults to "epsilon".
             denoising_loss_weight (int, optional): weight for denoising loss. Defaults to 1.
             variance_type (str, optional): variance type for noise addition.
                 Valid: ["fixed_small", "fixed_large", "learned", "learned_range"]. Defaults to "fixed_small".
             elucidated_diffusion (bool, optional): use ElucidatedDiffusion instead of DDPM. Defaults to False.
             beta_start (float, optional): starting beta value. Defaults to 5e-5.
             beta_end (float, optional): ending beta value. Defaults to 5e-2.
+            diffusion_type (str, optional): generative model type.
+                "ddpm" uses GaussianDiffusion1D (DDPM/DDIM scheduler, multi-step).
+                "drifting" uses DriftingModel (one-step inference, arXiv:2602.04770).
+                Defaults to "ddpm".
+            drift_step_size (float, optional): step size for drifting field update.
+                Only used when diffusion_type="drifting". Defaults to 1.0.
+            kernel_bandwidth (float, optional): RBF kernel bandwidth for drifting field.
+                Only used when diffusion_type="drifting". Defaults to 1.0.
         """
         super().__init__()
         self.vae_model = None
+        self._diffusion_type = diffusion_type
 
-        if elucidated_diffusion:
+        if diffusion_type == "drifting":
+            self.diffusion_model = DriftingModel(
+                model=model,
+                n_dims=latent_in_features,
+                drift_step_size=drift_step_size,
+                kernel_bandwidth=kernel_bandwidth,
+                loss_type=diffusion_loss,
+            )
+        elif elucidated_diffusion:
             self.diffusion_model = ElucidatedDiffusion(
                 net=model, seq_length=latent_in_features
             )
@@ -54,12 +80,14 @@ class GraspLatentDDM(BaseGraspSampler):
                 model=model,
                 n_dims=latent_in_features,
                 num_steps=diffusion_timesteps,
+                num_inference_steps=num_inference_steps,
                 loss_type=diffusion_loss,
                 beta_schedule=beta_schedule,
                 beta_start=beta_start,
                 beta_end=beta_end,
                 noise_scheduler_type=noise_scheduler_type,
                 variance_type=variance_type,
+                pred_type=pred_type,
             )
 
         self.loss_weight = denoising_loss_weight
@@ -71,7 +99,7 @@ class GraspLatentDDM(BaseGraspSampler):
 
     @property
     def scheduler_type(self):
-        return self.diffusion_model._noise_scheduler_type
+        return getattr(self.diffusion_model, "_noise_scheduler_type", self._diffusion_type)
 
     @property
     def _latent_loss_objects(self):

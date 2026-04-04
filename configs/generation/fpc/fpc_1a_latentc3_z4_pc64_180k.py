@@ -139,14 +139,19 @@ model = dict(
                 model=denoiser_model,
                 latent_in_features=grasp_latent_dims,
                 diffusion_timesteps=1000,
-                noise_scheduler_type="ddpm",
+                # "ddim" gives ~10x faster inference with negligible quality drop.
+                # Switch to "ddpm" to restore stochastic multi-step sampling.
+                noise_scheduler_type="ddim",
+                num_inference_steps=50,
                 diffusion_loss="l2",
-                beta_schedule="linear",
+                # Cosine schedule is better than linear for small latent dims.
+                # Supported values: "squaredcos_cap_v2", "linear", "scaled_linear".
+                beta_schedule="squaredcos_cap_v2",
+                # Prediction type: "epsilon" (original) or "v_prediction" (more stable).
+                pred_type="epsilon",
                 denoising_loss_weight=1,
                 variance_type="fixed_large",
                 elucidated_diffusion=False,
-                beta_start=0.00005,
-                beta_end=0.001,
             ),
         ),
         ckpt_path=ddm_ckpt_path,

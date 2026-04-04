@@ -230,3 +230,75 @@ class TestRandomRotations:
         assert torch.allclose(I, torch.eye(3).expand(BATCH, -1, -1), atol=1e-4)
         det = torch.linalg.det(R)
         assert torch.allclose(det, torch.ones(BATCH), atol=1e-4)
+
+
+# ---------------------------------------------------------------------------
+# 6D rotation representation — Zhou et al. CVPR 2019
+# ---------------------------------------------------------------------------
+
+from grasp_ldm.utils.rotations import H_to_t6d, matrix_to_rot6d, rot6d_to_matrix, t6d_to_H
+
+
+class TestRot6D:
+    def test_rot6d_shape(self):
+        R = get_random_rotations_in_angle_limit(1.0, batch_size=BATCH)
+        r6 = matrix_to_rot6d(R)
+        assert r6.shape == (BATCH, 6)
+
+    def test_rot6d_roundtrip(self):
+        """matrix → 6D → matrix should be identity."""
+        R = get_random_rotations_in_angle_limit(1.0, batch_size=BATCH)
+        R_recovered = rot6d_to_matrix(matrix_to_rot6d(R))
+        assert torch.allclose(R, R_recovered, atol=1e-5)
+
+    def test_rot6d_to_matrix_is_valid_rotation(self):
+        """Recovered matrix should satisfy R @ R.T ≈ I and det ≈ 1."""
+        R = get_random_rotations_in_angle_limit(1.0, batch_size=BATCH)
+        R2 = rot6d_to_matrix(matrix_to_rot6d(R))
+        I = torch.bmm(R2, R2.transpose(-1, -2))
+        assert torch.allclose(I, torch.eye(3).expand(BATCH, -1, -1), atol=1e-4)
+        det = torch.linalg.det(R2)
+        assert torch.allclose(det, torch.ones(BATCH), atol=1e-4)
+
+    def test_rot6d_works_for_arbitrary_6d_input(self):
+        """rot6d_to_matrix must produce valid SO(3) even for non-orthonormal input."""
+        r6 = torch.randn(BATCH, 6)
+        R = rot6d_to_matrix(r6)
+        I = torch.bmm(R, R.transpose(-1, -2))
+        assert torch.allclose(I, torch.eye(3).expand(BATCH, -1, -1), atol=1e-4)
+
+    def test_t6d_shape(self):
+        H = _random_H(BATCH)
+        t6d = H_to_t6d(H)
+        assert t6d.shape == (BATCH, 9)
+
+    def test_t6d_roundtrip(self):
+        """H → T6D → H should recover the original transform."""
+        H = _random_H(BATCH, angle_limit=0.5)
+        H2 = t6d_to_H(H_to_t6d(H))
+        assert torch.allclose(H, H2, atol=1e-5)
+
+
+class TestPointcloudDropoutBias:
+    """Verify that RandomPointcloudDropout no longer concentrates replacements at index 0."""
+
+    def test_replacement_not_biased_to_index_zero(self):
+        from grasp_ldm.dataset.augmentations import RandomPointcloudDropout
+
+        aug = RandomPointcloudDropout(p=1.0, max_dropout_ratio=0.5)
+        torch.manual_seed(42)
+        # Distinct points so we can count how often index-0 appears after dropout
+        B, N = 1, 100
+        pc = torch.zeros(B, N, 3)
+        pc[0, :, 0] = torch.arange(N, dtype=torch.float)  # x = point index
+
+        pc_out = aug(pc.clone())
+
+        # Count how many of the surviving values equal original index-0 value (x=0)
+        zero_count = (pc_out[0, :, 0] == 0).sum().item()
+        # With unbiased sampling, index-0 should appear at most ~5% of the time (1/N)
+        # With biased (old) sampling it would dominate. We check it's < 30%.
+        assert zero_count < N * 0.3, (
+            f"Too many replacements from index 0: {zero_count}/{N}. "
+            "Dropout replacement may still be biased."
+        )
